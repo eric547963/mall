@@ -26,6 +26,10 @@ public class HomeContentResult {
     private List<PmsProduct> newProductList;
     //人气推荐
     private List<PmsProduct> hotProductList;
+    //推荐餐食
+    private List<PmsProduct> foodProductList;
+    //猜你喜欢
+    private List<PmsProduct> guessYouLikeProductList;
     //推荐专题
     private List<CmsSubject> subjectList;
 }

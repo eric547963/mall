@@ -1,5 +1,6 @@
 package com.macro.mall.portal.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.macro.mall.common.exception.Asserts;
 import com.macro.mall.mapper.*;
 import com.macro.mall.model.*;
@@ -643,5 +644,19 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         calcAmount.setPayAmount(totalAmount.subtract(promotionAmount));
         return calcAmount;
     }
+
+	@Override
+	public List<OmsOrderDetail> queryOrderList(OmsOrderQueryParam params, Integer pageSize, Integer pageNum) {
+		UmsMember currentMember = memberService.getCurrentMember();
+		PageHelper.startPage(pageNum,pageSize);
+		params.setMemberId(currentMember.getId());
+		return portalOrderDao.queryOrderList(params);
+	}
+
+	@Override
+	public List<OmsOrderDetail> queryOrderDetail(String orderSn) {
+		UmsMember currentMember = memberService.getCurrentMember();
+		return portalOrderDao.queryOrderDetail(currentMember.getId(),orderSn);
+	}
 
 }

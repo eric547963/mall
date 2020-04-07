@@ -60,6 +60,30 @@
             hp.sort DESC
         LIMIT #{offset}, #{limit};
     </select>
+    <select id="getFoodProductList" resultMap="com.macro.mall.mapper.PmsProductMapper.BaseResultMap">
+        SELECT p.*
+        FROM
+            sms_food_recommend_product hp
+            LEFT JOIN pms_product p ON hp.product_id = p.id
+        WHERE
+            hp.recommend_status = 1
+            AND p.publish_status = 1
+        ORDER BY
+            hp.sort DESC
+        LIMIT #{offset}, #{limit};
+    </select>
+    <select id="getGuessYouLikeProductList" resultMap="com.macro.mall.mapper.PmsProductMapper.BaseResultMap">
+        SELECT p.*
+        FROM
+            sms_guess_like_product hp
+            LEFT JOIN pms_product p ON hp.product_id = p.id
+        WHERE
+            hp.recommend_status = 1
+            AND p.publish_status = 1
+        ORDER BY
+            hp.sort DESC
+        LIMIT #{offset}, #{limit};
+    </select>
 
     <select id="getRecommendSubjectList" resultMap="com.macro.mall.mapper.CmsSubjectMapper.BaseResultMap">
         SELECT s.*

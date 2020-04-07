@@ -4,7 +4,9 @@ services:
     image: mall/mall-admin:1.0-SNAPSHOT
     container_name: mall-admin
     ports:
-      - 8080:8080
+      - 8180:8180
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
     external_links:
       - redis:redis #可以用redis这个域名访问redis服务
       - mysql:db #可以用db这个域名访问mysql服务
@@ -12,7 +14,9 @@ services:
     image: mall/mall-search:1.0-SNAPSHOT
     container_name: mall-search
     ports:
-      - 8081:8081
+      - 8181:8181
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
     external_links:
       - elasticsearch:es #可以用es这个域名访问elasticsearch服务
       - mysql:db #可以用db这个域名访问mysql服务
@@ -20,7 +24,9 @@ services:
     image: mall/mall-portal:1.0-SNAPSHOT
     container_name: mall-portal
     ports:
-      - 8085:8085
+      - 8185:8185
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
     external_links:
       - redis:redis #可以用redis这个域名访问redis服务
       - mongo:mongo #可以用mongo这个域名访问mongo服务

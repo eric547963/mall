@@ -48,10 +48,14 @@ public class HomeServiceImpl implements HomeService {
         result.setHomeFlashPromotion(getHomeFlashPromotion());
         //获取新品推荐
         result.setNewProductList(homeDao.getNewProductList(0,4));
-        //获取人气推荐
+        //获取人气推荐(掌柜推荐)
         result.setHotProductList(homeDao.getHotProductList(0,4));
         //获取推荐专题
         result.setSubjectList(homeDao.getRecommendSubjectList(0,4));
+        //获取餐食推荐
+        result.setFoodProductList(homeDao.getFoodProductList(0,4));
+        //获取猜你喜欢产品
+        result.setGuessYouLikeProductList(homeDao.getGuessYouLikeProductList(0,4));
         return result;
     }
 
@@ -161,4 +165,9 @@ public class HomeServiceImpl implements HomeService {
         }
         return null;
     }
+
+	@Override
+	public List<PmsProduct> foodProductList(Integer pageSize, Integer pageNum) {
+        return homeDao.getFoodProductList((pageNum-1)*pageSize,pageSize);
+	}
 }

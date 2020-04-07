@@ -62,4 +62,12 @@ public interface UmsMemberService {
      * 刷新token
      */
     String refreshToken(String token);
+    /**
+     * 注册/登录后获取token
+     * @param phoneNumber
+     * @param authCode
+     * @return
+     */
+    @Transactional
+	String loginOrRegister(String phoneNumber, String authCode);
 }

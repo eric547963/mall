@@ -74,36 +74,36 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         return memberMapper.selectByPrimaryKey(id);
     }
 
-    @Override
+    @Override  //暂时不用该方法
     public void register(String username, String password, String telephone, String authCode) {
         //验证验证码
-        if(!verifyAuthCode(authCode,telephone)){
-            Asserts.fail("验证码错误");
-        }
-        //查询是否已有该用户
-        UmsMemberExample example = new UmsMemberExample();
-        example.createCriteria().andUsernameEqualTo(username);
-        example.or(example.createCriteria().andPhoneEqualTo(telephone));
-        List<UmsMember> umsMembers = memberMapper.selectByExample(example);
-        if (!CollectionUtils.isEmpty(umsMembers)) {
-            Asserts.fail("该用户已经存在");
-        }
-        //没有该用户进行添加操作
-        UmsMember umsMember = new UmsMember();
-        umsMember.setUsername(username);
-        umsMember.setPhone(telephone);
-        umsMember.setPassword(passwordEncoder.encode(password));
-        umsMember.setCreateTime(new Date());
-        umsMember.setStatus(1);
-        //获取默认会员等级并设置
-        UmsMemberLevelExample levelExample = new UmsMemberLevelExample();
-        levelExample.createCriteria().andDefaultStatusEqualTo(1);
-        List<UmsMemberLevel> memberLevelList = memberLevelMapper.selectByExample(levelExample);
-        if (!CollectionUtils.isEmpty(memberLevelList)) {
-            umsMember.setMemberLevelId(memberLevelList.get(0).getId());
-        }
-        memberMapper.insert(umsMember);
-        umsMember.setPassword(null);
+//        if(!verifyAuthCode(authCode,telephone)){
+//            Asserts.fail("验证码错误");
+//        }
+//        //查询是否已有该用户
+//        UmsMemberExample example = new UmsMemberExample();
+//        example.createCriteria().andUsernameEqualTo(username);
+//        example.or(example.createCriteria().andPhoneEqualTo(telephone));
+//        List<UmsMember> umsMembers = memberMapper.selectByExample(example);
+//        if (!CollectionUtils.isEmpty(umsMembers)) {
+//            Asserts.fail("该用户已经存在");
+//        }
+//        //没有该用户进行添加操作
+//        UmsMember umsMember = new UmsMember();
+//        umsMember.setUsername(username);
+//        umsMember.setPhone(telephone);
+//        umsMember.setPassword(passwordEncoder.encode(password));
+//        umsMember.setCreateTime(new Date());
+//        umsMember.setStatus(1);
+//        //获取默认会员等级并设置
+//        UmsMemberLevelExample levelExample = new UmsMemberLevelExample();
+//        levelExample.createCriteria().andDefaultStatusEqualTo(1);
+//        List<UmsMemberLevel> memberLevelList = memberLevelMapper.selectByExample(levelExample);
+//        if (!CollectionUtils.isEmpty(memberLevelList)) {
+//            umsMember.setMemberLevelId(memberLevelList.get(0).getId());
+//        }
+//        memberMapper.insert(umsMember);
+//        umsMember.setPassword(null);
     }
 
     @Override
@@ -161,21 +161,21 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         throw new UsernameNotFoundException("用户名或密码错误");
     }
 
-    @Override
+    @Override //该方法暂时不用
     public String login(String username, String password) {
         String token = null;
         //密码需要客户端加密后传递
-        try {
-            UserDetails userDetails = loadUserByUsername(username);
-            if(!passwordEncoder.matches(password,userDetails.getPassword())){
-                throw new BadCredentialsException("密码不正确");
-            }
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            token = jwtTokenUtil.generateToken(userDetails);
-        } catch (AuthenticationException e) {
-            LOGGER.warn("登录异常:{}", e.getMessage());
-        }
+//        try {
+//            UserDetails userDetails = loadUserByUsername(username);
+//            if(!passwordEncoder.matches(password,userDetails.getPassword())){
+//                throw new BadCredentialsException("密码不正确");
+//            }
+//            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//            token = jwtTokenUtil.generateToken(userDetails);
+//        } catch (AuthenticationException e) {
+//            LOGGER.warn("登录异常:{}", e.getMessage());
+//        }
         return token;
     }
 
@@ -192,5 +192,43 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         String realAuthCode = memberCacheService.getAuthCode(telephone);
         return authCode.equals(realAuthCode);
     }
+
+	@Override
+	public String loginOrRegister(String phoneNumber, String authCode) {
+		if(!verifyAuthCode(authCode,phoneNumber)){
+            Asserts.fail("验证码错误");
+            return null;
+        }
+		UmsMember member = getByUsername(phoneNumber);
+        if(member==null){
+        	//执行注册
+        	//没有该用户进行添加操作
+            UmsMember umsMember = new UmsMember();
+            umsMember.setUsername(phoneNumber);
+            umsMember.setPhone(phoneNumber);
+            umsMember.setPassword(passwordEncoder.encode(phoneNumber));
+            umsMember.setCreateTime(new Date());
+            umsMember.setStatus(1);
+            //获取默认会员等级并设置
+            UmsMemberLevelExample levelExample = new UmsMemberLevelExample();
+            levelExample.createCriteria().andDefaultStatusEqualTo(1);
+            List<UmsMemberLevel> memberLevelList = memberLevelMapper.selectByExample(levelExample);
+            if (!CollectionUtils.isEmpty(memberLevelList)) {
+                umsMember.setMemberLevelId(memberLevelList.get(0).getId());
+            }
+            memberMapper.insert(umsMember);
+            umsMember.setPassword(null);
+        }
+        //执行登录
+        try {
+            UserDetails userDetails = loadUserByUsername(phoneNumber);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return jwtTokenUtil.generateToken(userDetails);
+        } catch (AuthenticationException e) {
+            LOGGER.warn("登录异常:{}", e.getMessage());
+        }
+        return null;
+	}
 
 }

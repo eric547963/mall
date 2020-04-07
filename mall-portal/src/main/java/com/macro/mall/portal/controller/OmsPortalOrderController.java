@@ -1,16 +1,25 @@
 package com.macro.mall.portal.controller;
 
-import com.macro.mall.common.api.CommonResult;
-import com.macro.mall.portal.domain.ConfirmOrderResult;
-import com.macro.mall.portal.domain.OrderParam;
-import com.macro.mall.portal.service.OmsPortalOrderService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Map;
+import com.macro.mall.common.api.CommonResult;
+import com.macro.mall.portal.domain.ConfirmOrderResult;
+import com.macro.mall.portal.domain.OmsOrderDetail;
+import com.macro.mall.portal.domain.OmsOrderQueryParam;
+import com.macro.mall.portal.domain.OrderParam;
+import com.macro.mall.portal.service.OmsPortalOrderService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 订单管理Controller
@@ -61,5 +70,20 @@ public class OmsPortalOrderController {
     public CommonResult cancelOrder(Long orderId) {
         portalOrderService.sendDelayMessageCancelOrder(orderId);
         return CommonResult.success(null);
+    }
+    @ApiOperation("查询订单列表")
+    @RequestMapping(value = "/queryOrderList", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult queryOrderList(OmsOrderQueryParam params,
+    		@RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
+    	List<OmsOrderDetail> orders = portalOrderService.queryOrderList(params,pageSize,pageNum);
+    	return CommonResult.success(orders);
+    }
+    @ApiOperation("查询单个订单详情")
+    @RequestMapping(value = "/queryOrderDetail", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult queryOrderDetail(String orderSn) {
+    	return CommonResult.success(portalOrderService.queryOrderDetail(orderSn));
     }
 }

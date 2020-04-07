@@ -41,6 +41,14 @@ public class HomeController {
         List<PmsProduct> productList = homeService.recommendProductList(pageSize, pageNum);
         return CommonResult.success(productList);
     }
+    @ApiOperation("分页获取餐食")
+    @RequestMapping(value = "/foodProductList", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<PmsProduct>> foodProductList(@RequestParam(value = "pageSize", defaultValue = "4") Integer pageSize,
+    		@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
+    	List<PmsProduct> productList = homeService.foodProductList(pageSize, pageNum);
+    	return CommonResult.success(productList);
+    }
 
     @ApiOperation("获取首页商品分类")
     @RequestMapping(value = "/productCateList/{parentId}", method = RequestMethod.GET)

@@ -1,6 +1,9 @@
 package com.macro.mall.security.component;
 
 import com.macro.mall.security.config.IgnoreUrlsConfig;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.SecurityMetadataSource;
@@ -19,7 +22,7 @@ import java.io.IOException;
  * Created by macro on 2020/2/7.
  */
 public class DynamicSecurityFilter extends AbstractSecurityInterceptor implements Filter {
-
+	Logger logger = LoggerFactory.getLogger(DynamicSecurityFilter.class);
     @Autowired
     private DynamicSecurityMetadataSource dynamicSecurityMetadataSource;
     @Autowired
@@ -46,6 +49,7 @@ public class DynamicSecurityFilter extends AbstractSecurityInterceptor implement
         //白名单请求直接放行
         PathMatcher pathMatcher = new AntPathMatcher();
         for (String path : ignoreUrlsConfig.getUrls()) {
+        	//logger.info("ipath:{},requestUri:{}",path,request.getRequestURI());
             if(pathMatcher.match(path,request.getRequestURI())){
                 fi.getChain().doFilter(fi.getRequest(), fi.getResponse());
                 return;

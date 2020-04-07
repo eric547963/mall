@@ -7,6 +7,74 @@
                     resultMap="com.macro.mall.mapper.OmsOrderItemMapper.BaseResultMap">
         </collection>
     </resultMap>
+    <resultMap id="orderDetailMap2" type="com.macro.mall.portal.domain.OmsOrderDetail"
+               extends="com.macro.mall.mapper.OmsOrderMapper.BaseResultMap">
+        <id column="order_sn" jdbcType="VARCHAR" property="orderSn" />
+        <collection property="orderItemList" columnPrefix="ot_"
+                    resultMap="com.macro.mall.mapper.OmsOrderItemMapper.BaseResultMap">
+        </collection>
+    </resultMap>
+    <select id="queryOrderList" resultMap="orderDetailMap2">
+    SELECT
+            o.order_sn,
+			o.create_time,
+			o.pay_amount,
+			o.status,
+            ot.product_name ot_product_name,
+            ot.product_pic ot_product_pic,
+            ot.product_quantity ot_product_quantity
+        FROM
+            oms_order o
+            LEFT JOIN oms_order_item ot ON o.id = ot.order_id
+        WHERE o.member_id = #{memberId}
+        <if test="status !=null">
+        	o.status =  #{status}
+        </if>
+        
+        order by o.status asc, o.create_time desc
+    </select>
+    <select id="queryOrderDetail" resultMap="orderDetailMap2">
+    SELECT
+            o.order_sn,
+			o.create_time,
+			o.pay_amount,
+			o.total_amount,
+			o.freight_amount,
+			o.promotion_amount,
+			o.integration_amount,
+			o.coupon_amount,
+			o.discount_amount,
+			o.pay_type,
+			o.delivery_company,
+			o.delivery_sn,
+			o.auto_confirm_day,
+			o.use_integration,
+			o.payment_time,
+			o.delivery_time,
+			o.receive_time,
+			o.comment_time,
+			o.auto_confirm_day,
+			o.promotion_info,
+			o.receiver_name,
+			o.receiver_phone,
+			o.receiver_post_code,
+			o.receiver_province,
+			o.receiver_city,
+			o.receiver_region,
+			o.receiver_detail_address,
+			o.note,
+			o.status,
+            ot.product_name ot_product_name,
+            ot.product_pic ot_product_pic,
+            ot.product_quantity ot_product_quantity,
+            ot.product_brand ot_product_brand,
+            ot.product_price ot_product_price
+        FROM
+            oms_order o
+            LEFT JOIN oms_order_item ot ON o.id = ot.order_id
+        WHERE
+            o.order_sn = #{orderSn} and o.member_id = #{memberId}
+    </select>
     <select id="getDetail" resultMap="orderDetailMap">
         SELECT
             o.id,

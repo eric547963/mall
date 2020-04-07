@@ -34,4 +34,8 @@ public interface HomeService {
      * @param cateId 专题分类id
      */
     List<CmsSubject> getSubjectList(Long cateId, Integer pageSize, Integer pageNum);
+    /**
+     * 首页餐食推荐
+     */
+	List<PmsProduct> foodProductList(Integer pageSize, Integer pageNum);
 }

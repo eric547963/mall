@@ -37,4 +37,12 @@ public interface HomeDao {
      * 获取推荐专题
      */
     List<CmsSubject> getRecommendSubjectList(@Param("offset") Integer offset, @Param("limit") Integer limit);
+    /**
+     * 获取餐食推荐
+     */
+	List<PmsProduct> getFoodProductList(@Param("offset") Integer offset, @Param("limit") Integer limit);
+	/**
+	 * 获取猜你喜欢
+	 */
+	List<PmsProduct> getGuessYouLikeProductList(@Param("offset") Integer offset, @Param("limit") Integer limit);
 }

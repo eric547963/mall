@@ -1,3 +1,5 @@
+server:
+  port: 8180
 spring:
   profiles:
     active: dev #默认为开发环境
@@ -36,14 +38,14 @@ secure:
       - /**/*.css
       - /**/*.png
       - /**/*.ico
-      - /webjars/springfox-swagger-ui/**
-      - /actuator/**
-      - /druid/**
-      - /admin/login
-      - /admin/register
-      - /admin/info
-      - /admin/logout
-      - /minio/upload
+      - /**/webjars/springfox-swagger-ui/**
+      - /**/actuator/**
+      - /**/druid/**
+      - /**/admin/login
+      - /**/admin/register
+      - /**/admin/info
+      - /**/admin/logout
+      - /**/minio/upload
 
 aliyun:
   oss:

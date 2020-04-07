@@ -33,9 +33,9 @@ public class UmsMemberController {
     @Autowired
     private UmsMemberService memberService;
 
-    @ApiOperation("会员注册")
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    @ResponseBody
+//    @ApiOperation("会员注册")
+//    @RequestMapping(value = "/register", method = RequestMethod.POST)
+//    @ResponseBody
     public CommonResult register(@RequestParam String username,
                                  @RequestParam String password,
                                  @RequestParam String telephone,
@@ -44,9 +44,9 @@ public class UmsMemberController {
         return CommonResult.success(null,"注册成功");
     }
 
-    @ApiOperation("会员登录")
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ResponseBody
+//    @ApiOperation("会员登录")
+//    @RequestMapping(value = "/login", method = RequestMethod.POST)
+//    @ResponseBody
     public CommonResult login(@RequestParam String username,
                               @RequestParam String password) {
         String token = memberService.login(username, password);
@@ -58,7 +58,20 @@ public class UmsMemberController {
         tokenMap.put("tokenHead", tokenHead);
         return CommonResult.success(tokenMap);
     }
-
+    @ApiOperation("会员登录/注册")
+    @RequestMapping(value = "/loginOrRegister", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult loginOrRegister(@RequestParam String phoneNumber,
+            @RequestParam String authCode) {
+	String token = memberService.loginOrRegister(phoneNumber, authCode);
+	if (token == null) {
+		return CommonResult.validateFailed("手机验证码错误");
+	}
+	Map<String, String> tokenMap = new HashMap<>();
+	tokenMap.put("token", token);
+	tokenMap.put("tokenHead", tokenHead);
+	return CommonResult.success(tokenMap);
+	}
     @ApiOperation("获取会员信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseBody
